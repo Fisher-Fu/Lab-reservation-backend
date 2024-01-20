@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kreadcn.homework.dao.SeasonMapper">
+    <resultMap id="BaseResultMap" type="kreadcn.homework.model.Season">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="season_name" jdbcType="VARCHAR" property="seasonName"/>
+        <result column="started_at" jdbcType="TIMESTAMP" property="startedAt"/>
+        <result column="enabled" jdbcType="BIT" property="enabled"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="created_by" jdbcType="INTEGER" property="createdBy"/>
+        <result column="updated_by" jdbcType="INTEGER" property="updatedBy"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, season_name, started_at, enabled, created_at, updated_at, created_by, updated_by
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from season
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="kreadcn.homework.model.Season">
+        insert into season (id, season_name, started_at,
+        enabled, created_at, updated_at,
+        created_by, updated_by)
+        values (#{id,jdbcType=INTEGER}, #{seasonName,jdbcType=VARCHAR}, #{startedAt,jdbcType=TIMESTAMP},
+        #{enabled,jdbcType=BIT}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP},
+        #{createdBy,jdbcType=INTEGER}, #{updatedBy,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="kreadcn.homework.model.Season">
+        insert into season
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="seasonName != null">
+                season_name,
+            </if>
+            <if test="startedAt != null">
+                started_at,
+            </if>
+            <if test="enabled != null">
+                enabled,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="seasonName != null">
+                #{seasonName,jdbcType=VARCHAR},
+            </if>
+            <if test="startedAt != null">
+                #{startedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="enabled != null">
+                #{enabled,jdbcType=BIT},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="kreadcn.homework.model.Season">
+        update season
+        <set>
+            <if test="seasonName != null">
+                season_name = #{seasonName,jdbcType=VARCHAR},
+            </if>
+            <if test="startedAt != null">
+                started_at = #{startedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="enabled != null">
+                enabled = #{enabled,jdbcType=BIT},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="kreadcn.homework.model.Season">
+        update season
+        set season_name = #{seasonName,jdbcType=VARCHAR},
+        started_at = #{startedAt,jdbcType=TIMESTAMP},
+        enabled = #{enabled,jdbcType=BIT},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        created_by = #{createdBy,jdbcType=INTEGER},
+        updated_by = #{updatedBy,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!-- @Description:后增内容  @Author:He.Y  @Date:2023-10-20 -->
+    <!-- 批量删除 -->
+    <update id="deleteByIds">
+        delete from season
+        where id in
+        <foreach close=")" collection="seasonIds" index="index" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <!-- 获取名字个数(分页) -->
+    <select id="count" resultType="integer">
+        select count(*)
+        from season
+        <where>
+            <if test="seasonName != null">
+                season_name like #{seasonName}
+            </if>
+        </where>
+    </select>
+    <!-- 获取学期(分页) 模糊查询(根据学期名称查询) -->
+    <select id="list" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season
+        <where>
+            <if test="queryDTO.seasonName != null">season_name like #{queryDTO.seasonName}</if>
+        </where>
+
+        limit #{offset}, #{limit}
+    </select>
+    <!-- @Description:后增内容2.0  @Author:He.Y  @Date:2023-11-14 -->
+    <!-- 根据学期可用性(enabled)获取学期信息(Season类) -->
+    <select id="selectByEnabled" parameterType="java.lang.Boolean" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from season
+        where enabled = #{enabled,jdbcType=BOOLEAN}
+    </select>
+
+</mapper>

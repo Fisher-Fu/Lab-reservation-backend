@@ -1,0 +1,72 @@
+{
+  "prepare": [
+    {
+      "core": "xpath",
+      "url": "https://jour.duxiu.com/advsearchthesis",
+      "containingRecords": false,
+      "method": "GET"
+    }
+  ],
+  "fetch": [
+    {
+      "core": "xpath",
+      "url": "https://jour.duxiu.com/advsearchthesis?",
+      "method": "GET",
+      "request": [
+        {
+          "saveTo": "GET",
+          "fixed": true,
+          "encode": "false",
+          "script": "const fieldMap = {\n  any: 1,\n  title: 2,\n  author: 3,\n  department: 5,\n  keyword: 4,\n}\n\nconst oprMap = {\n  and: 1,\n  or: 2,\n  not: 3\n}\n\nretVal = '';\n\nfor (let i = 0; i < stepContext.getQueryItems().size(); i++) {\n  const queryItem = stepContext.getQueryItems().get(i);\n  if (!queryItem.getValue() || !fieldMap[queryItem.getField()]) {\n    continue;\n  }\n\n  if (i != 0) {\n    retVal += '&';\n  }\n  retVal += \"field\";\n  retVal += (i + 1);\n  retVal += \"=\";\n  retVal += fieldMap[queryItem.getField()];\n  retVal += \"&sw\";\n  retVal += (i + 1);\n  retVal += \"=\";\n  retVal += Utils.encodeURL(queryItem.getValue(), \"utf-8\");\n  if (i > 0) {\n    retVal += \"&select\";\n    retVal += (i + 1);\n    retVal += \"=\";\n    retVal += oprMap[queryItem.getOperator()];\n  }\n}\n\nretVal += \"&BeginBox=-1&EndBox=-1&rn=20&sort=0&Pages=\";\nretVal += (stepContext.getCurPage() + 1);\nretVal += \"&ecode=utf-8&said=0&pid=0&uscol=0&sgcount=0&qihao=&bCon=&allsw=&sectyear=&jourid=&fenlei=&core=&searchtype=&dgid=0&de=0\";"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "//div[@class='find_top']/span",
+        "prefix": "找到相关的中文学位论文"
+      },
+      "records": {
+        "expr": "//div[@class='journal']/ul/li"
+      },
+      "fields": [
+        {
+          "expr": "//dl/dt/a",
+          "key": "title"
+        },
+        {
+          "expr": "//dl/dd[1]/p/span[1]/span[1]",
+          "key": "abstract"
+        },
+        {
+          "expr": "//dd/b[text()='作者：']/../html()",
+          "key": "author",
+          "escape": true,
+          "script": "const flag = '<b>作者：</b>';\nconst index = retVal.indexOf(flag, 0);\nif (index < 0) {\n  retVal = '';\n} else {\n  const end = retVal.indexOf('<b>', index + flag.length);\n  if (end < 0) {\n    retVal = retVal.substring(index + flag.length);\n  } else {\n    retVal = retVal.substring(index + flag.length, end);\n  }\n}\n"
+        },
+        {
+          "expr": "//dd/b[text()='作者：']/../html()",
+          "key": "degree",
+          "escape": true,
+          "script": "const flag = '<b>学位名称：</b>';\nconst index = retVal.indexOf(flag, 0);\nif (index < 0) {\n  retVal = '';\n} else {\n  const end = retVal.indexOf('<b>', index + flag.length);\n  if (end < 0) {\n    retVal = retVal.substring(index + flag.length);\n  } else {\n    retVal = retVal.substring(index + flag.length, end);\n  }\n}\n"
+        },
+        {
+          "expr": "//dd/b[text()='作者：']/../html()",
+          "key": "degreeDept",
+          "escape": true,
+          "script": "const flag = '<b>学位授予单位：</b>';\nconst index = retVal.indexOf(flag, 0);\nif (index < 0) {\n  retVal = '';\n} else {\n  const end = retVal.indexOf('<b>', index + flag.length);\n  if (end < 0) {\n    retVal = retVal.substring(index + flag.length);\n  } else {\n    retVal = retVal.substring(index + flag.length, end);\n  }\n}\n"
+        },
+        {
+          "expr": "//dd/b[text()='作者：']/../html()",
+          "key": "degreeDate",
+          "escape": true,
+          "script": "const flag = '<b>学位年度：</b>';\nconst index = retVal.indexOf(flag, 0);\nif (index < 0) {\n  retVal = '';\n} else {\n  const end = retVal.indexOf('<b>', index + flag.length);\n  if (end < 0) {\n    retVal = retVal.substring(index + flag.length);\n  } else {\n    retVal = retVal.substring(index + flag.length, end);\n  }\n}\n"
+        },
+        {
+          "expr": "//dl/dt/a/@href",
+          "key": "_detail",
+          "script": "retVal='https://jour.duxiu.com/'+retVal;"
+        }
+      ]
+    }
+  ]
+}

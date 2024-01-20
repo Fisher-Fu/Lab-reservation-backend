@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kreadcn.homework.dao.HomeworkMapper">
+    <resultMap id="BaseResultMap" type="kreadcn.homework.model.Homework">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="finished" jdbcType="BIT" property="finished"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="created_by" jdbcType="INTEGER" property="createdBy"/>
+        <result column="updated_by" jdbcType="INTEGER" property="updatedBy"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , name, course_name, finished, description, created_by, updated_by, created_at,
+    updated_at
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from homework
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from homework
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="kreadcn.homework.model.Homework" keyProperty="id" useGeneratedKeys="true">
+        insert into homework (id, name, course_name,
+                              finished, description, created_by,
+                              updated_by, created_at, updated_at)
+        values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{courseName,jdbcType=VARCHAR},
+                #{finished,jdbcType=BIT}, #{description,jdbcType=VARCHAR}, #{createdBy,jdbcType=INTEGER},
+                #{updatedBy,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="kreadcn.homework.model.Homework">
+        update homework
+        set name        = #{name,jdbcType=VARCHAR},
+            course_name = #{courseName,jdbcType=VARCHAR},
+            finished    = #{finished,jdbcType=BIT},
+            description = #{description,jdbcType=VARCHAR},
+            created_by  = #{createdBy,jdbcType=INTEGER},
+            updated_by  = #{updatedBy,jdbcType=INTEGER},
+            created_at  = #{createdAt,jdbcType=TIMESTAMP},
+            updated_at  = #{updatedAt,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!-- 批量删除 -->
+    <delete id="deleteByIds">
+        delete from homework
+        where id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and finished=0
+        <if test="adminId != null">
+            and created_by=#{adminId}
+        </if>
+    </delete>
+
+    <!-- 获取名字个数(分页) -->
+    <select id="count" resultType="integer">
+        select count(*)
+        from homework
+        <where>
+            <if test="queryDTO.keyword != null">
+                (name like #{queryDTO.keyword} or course_name like #{queryDTO.keyword})
+            </if>
+            <if test="queryDTO.createdBy != null">
+                and created_by=#{queryDTO.createdBy}
+            </if>
+        </where>
+    </select>
+
+    <!-- 获取部门(分页) -->
+    <select id="list" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from homework
+        <where>
+            <if test="queryDTO.keyword != null">
+                (name like #{queryDTO.keyword} or course_name like #{queryDTO.keyword})
+            </if>
+            <if test="queryDTO.createdBy != null">
+                and created_by=#{queryDTO.createdBy}
+            </if>
+        </where>
+        <if test="queryDTO.orderBy != null">
+            order by ${queryDTO.orderBy}
+        </if>
+        <if test="queryDTO.orderBy == null">
+            order by id desc
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="listByIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from homework
+        where finished=0 and id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

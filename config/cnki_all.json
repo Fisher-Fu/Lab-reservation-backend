@@ -1,0 +1,78 @@
+{
+  "fetch": [
+    {
+      "core": "xpath",
+      "url": "https://kns.cnki.net/kns8/Brief/GetGridTableHtml",
+      "method": "POST",
+      "request": [
+        {
+          "saveTo": "STATE",
+          "value": "DBCode=CFLS&KuaKuCode=CJFQ,CDMD,CIPD,CCND,CISD,SNAD,BDZK,CCJD,CCVD,CJFN"
+        },
+        {
+          "saveTo": "POST",
+          "fixed": true,
+          "encode": false,
+          "script": "const qGroup = [];\nconst oprMap = { and: 1, or: 2, not: 3 };\nfor (let i = 0; i < stepContext.getQueryItems().size(); i++) {\n  const queryItem = stepContext.getQueryItems().get(i);\n  if (queryItem.getField() === 'title' || queryItem.getField() === 'any') {\n    qGroup.push({\n      Key: 'input[data-tipid=gradetxt-3]',\n      Title: '篇名',\n      Logic: oprMap[queryItem.getOperator()],\n      Items: [\n        {\n          Key: 'input[data-tipid=gradetxt-' + (i + 1) + ']',\n          Title: queryItem.getValue(),\n          Logic: oprMap[queryItem.getOperator()],\n          Name: 'TI',\n          Operate: '=',\n          Value: queryItem.getValue(),\n          ExtendType: 1,\n          ExtendValue: '中英文对照',\n          Value2: '',\n        },\n      ],\n      ChildItems: [],\n    });\n  } else if (queryItem.getField() === 'author') {\n    qGroup.push({\n      Key: 'input[data-tipid=gradetxt-' + (i + 1) + ']',\n      Title: '作者',\n      Logic: oprMap[queryItem.getOperator()],\n      Items: [\n        {\n          Key: '',\n          Title: 'this is author',\n          Logic: 1,\n          Name: 'AU',\n          Operate: '=',\n          Value: 'this is author',\n          ExtendType: 1,\n          ExtendValue: '中英文对照',\n          Value2: '',\n        },\n      ],\n      ChildItems: [],\n    });\n  }\n}\n\nqGroup.push({ Key: 'ControlGroup', Title: '', Logic: 1, Items: [], ChildItems: [] })\nconst queryJson = {\n  Platform: '',\n  DBCode: stepContext.getStateMap().get('DBCode'),\n  KuaKuCode: '',\n  QNode: { QGroup: qGroup }\n};\nretVal = '';\nif (stepContext.getCurPage() == 0) {\n  retVal += 'IsSearch=true';\n} else {\n  retVal += 'IsSearch=false';\n}\nretVal += '&QueryJson=';\nretVal += Utils.encodeURL(JSON.stringify(queryJson), 'utf-8');\nretVal += '&PageName=AdvSearch&HandlerId=9&DBCode=';\nretVal += stepContext.getStateMap().get('DBCode');\nretVal += '&KuaKuCodes=CJFQ%2CCDMD%2CCIPD%2CCCND%2CCISD%2CSNAD%2CBDZK%2CCCJD%2CCCVD%2CCJFN&CurPage=';\nretVal += (stepContext.getCurPage() + 1);\nretVal += '&RecordsCntPerPage=20&CurDisplayMode=custommode&CurrSortField=&CurrSortFieldType=desc&IsSortSearch=false&IsSentenceSearch=false&Subject='\nconst sqlVal = stepContext.getStateMap().get('sqlVal');\nif (sqlVal != null) {\n  retVal += '&SearchSql=' + sqlVal;\n}"
+        },
+        {
+          "saveTo": "HEADER",
+          "value": "Referer=https://kns.cnki.net/"
+        },
+        {
+          "saveTo": "HEADER",
+          "value": "Content-Type=application/x-www-form-urlencoded; charset=utf-8"
+        }
+      ],
+      "response": [
+        {
+          "expr": "//input[@id='sqlVal']/@value",
+          "key": "sqlVal"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "//span[@class='pagerTitleCell']/em"
+      },
+      "records": {
+        "expr": "//*[@id='gridTable']/dl/dd"
+      },
+      "fields": [
+        {
+          "expr": "//h6",
+          "key": "title"
+        },
+        {
+          "expr": "//div[@class='authorinfo']/p/a",
+          "key": "author"
+        },
+        {
+          "expr": "//span[@class='journal']/a",
+          "key": "source"
+        },
+        {
+          "expr": "//p[@class='abstract']",
+          "key": "abstract",
+          "prefix": "摘要："
+        },
+        {
+          "expr": "//p[@class='baseinfo']/em",
+          "key": "docType"
+        },
+        {
+          "expr": "//p[@class='keywords']/a",
+          "key": "keyword"
+        },
+        {
+          "expr": "//span[@class='date']",
+          "key": "pubDate"
+        },
+        {
+          "expr": "//h6//a[@class='fz14']/@href",
+          "key": "_detail",
+          "script": "var index1,index2,db,file; index1=retVal.indexOf('filename=');index2=retVal.indexOf('&', index1);file=retVal.substring(index1+9,index2);index1=retVal.indexOf('dbname=');index2=retVal.indexOf('&', index1);db=retVal.substring(index1+7,index2); retVal='https://kns.cnki.net/kcms/detail/detail.aspx?dbname='+db+'&filename='+file"
+        }
+      ]
+    }
+  ]
+}

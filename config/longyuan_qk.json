@@ -1,0 +1,66 @@
+{
+  "prepare": [
+    {
+      "core": "xpath",
+      "url": "https://sdstwx.dps.qikan.cn/",
+      "containingRecords": false,
+      "method": "GET"
+    }
+  ],
+  "fetch": [
+    {
+      "core": "json",
+      "url": "https://sdstwx.dps.qikan.cn/api/magazine/article/search?",
+      "method": "GET",
+      "request": [
+        {
+          "saveTo": "GET",
+          "fixed": true,
+          "encode": false,
+          "script": "function getLogic(opr) {\n  if (\"or\" === opr) {\n    return 1;\n  }\n\n  if (\"not\" === opr) {\n    return 2;\n  }\n\n  return 0;\n}\n\nconst title = Utils.findQueryItem(stepContext.getQueryItems(), \"title\");\nconst journal = Utils.findQueryItem(stepContext.getQueryItems(), \"journal\");\nlet any = Utils.findQueryItem(stepContext.getQueryItems(), \"any\");\n\nif (title == null && journal == null && any == null) {\n  any = stepContext.getQueryItems().get(0);\n}\n\nlet retVal = 'pageNumber=';\nretVal += (stepContext.getCurPage() + 1);\nretVal += \"&pageSize=20&sortType=0\";\n\nif (title != null) {\n  retVal += \"&title=\"\n  retVal += Utils.encodeURL(title.getValue(), \"utf-8\");\n  retVal += \"&titleLogic=\";\n  retVal += getLogic(title.getOperator());\n  retVal += \"&titlePrecise=1\"\n}\nif (journal != null) {\n  retVal += '&magazineName=';\n  retVal += Utils.encodeURL(journal.getValue(), \"utf-8\");\n  retVal += \"&magazineNameLogic=\";\n  retVal += getLogic(journal.getOperator());\n  retVal += \"&magazineNamePrecise=1\";\n}\nif (any != null) {\n  retVal += '&content=';\n  retVal += Utils.encodeURL(any.getValue(), \"utf-8\");\n  retVal += \"&contentLogic=\";\n  retVal += getLogic(any.getOperator());\n  retVal += \"&contentPrecise=1\";\n}\n\nretVal += '&minDate=1994-01-01&minDateLogic=0&minDatePrecise=0&maxDate='\nretVal += Utils.now('yyyy-MM-dd')\nretVal += \"&maxDateLogic=0\""
+        },
+        {
+          "saveTo": "HEADER",
+          "value": "Referer=https://sdstwx.dps.qikan.cn/Template/WebLibrary/index.html"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "$.ItemCount",
+        "prefix": "共",
+        "suffix": "種"
+      },
+      "records": {
+        "expr": "$.Data"
+      },
+      "fields": [
+        {
+          "expr": "$.Title",
+          "key": "title"
+        },
+        {
+          "expr": "$.Author",
+          "key": "author"
+        },
+        {
+          "expr": "$.Column",
+          "key": "column"
+        },
+        {
+          "expr": "$.Summary",
+          "escape": true,
+          "key": "abstract"
+        },
+        {
+          "expr": "$.MagazineName",
+          "key": "journal"
+        },
+        {
+          "expr": "$.Id",
+          "key": "_detail",
+          "script": "retVal='https://sdstwx.dps.qikan.cn/Template/WebLibrary/index.html#/textReading/magazine/' + record.getString('MagazineId') + '/' + record.getString('Year') + '/' + record.getString('Issue') + '/' + record.getString('Id');"
+        }
+      ]
+    }
+  ]
+}

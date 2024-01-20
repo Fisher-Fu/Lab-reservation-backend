@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kreadcn.homework.dao.UserDepartmentMapper">
+    <resultMap id="BaseResultMap" type="kreadcn.homework.model.UserDepartment">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="created_by" jdbcType="INTEGER" property="createdBy"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , department_id, user_id, created_by
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_department
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from user_department
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="kreadcn.homework.model.UserDepartment">
+        insert into user_department (id, department_id, user_id,
+                                     created_by)
+        values (#{id,jdbcType=INTEGER}, #{departmentId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+                #{createdBy,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="kreadcn.homework.model.UserDepartment">
+        update user_department
+        set department_id = #{departmentId,jdbcType=INTEGER},
+            user_id       = #{userId,jdbcType=INTEGER},
+            created_by    = #{createdBy,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!-- 批量删除 -->
+    <delete id="deleteByDepartmentId">
+        delete from user_department
+        where department_id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="adminId != null">
+            and created_by=#{adminId}
+        </if>
+    </delete>
+
+    <select id="listByDepartmentId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_department
+        where department_id = #{id}
+        <if test="adminId != null">
+            and created_by=#{adminId}
+        </if>
+    </select>
+
+    <select id="listByDepartmentIds" resultType="java.lang.Integer">
+        select
+        user_id
+        from user_department
+        where department_id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by user_id
+    </select>
+
+    <select id="listByUserId" resultType="java.lang.Integer">
+        select department_id
+        from user_department
+        where user_id = #{id}
+    </select>
+
+    <delete id="deleteByUserIds">
+        delete from user_department
+        where department_id=#{departmentId} and user_id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

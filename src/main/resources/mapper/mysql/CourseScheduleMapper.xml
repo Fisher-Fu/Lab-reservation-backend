@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kreadcn.homework.dao.CourseScheduleMapper">
+    <resultMap id="BaseResultMap" type="kreadcn.homework.model.CourseSchedule">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="section" jdbcType="INTEGER" property="section"/>
+        <result column="week_range" jdbcType="INTEGER" property="weekRange"/>
+        <result column="week_day" jdbcType="INTEGER" property="weekDay"/>
+        <result column="student_count" jdbcType="INTEGER" property="studentCount"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="season_id" jdbcType="INTEGER" property="seasonId"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
+        <result column="room_count" jdbcType="INTEGER" property="roomCount"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="created_by" jdbcType="INTEGER" property="createdBy"/>
+        <result column="updated_by" jdbcType="INTEGER" property="updatedBy"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, course_name, section, week_range, week_day, student_count, status, season_id,
+        description, reason, room_count, created_at, updated_at, created_by, updated_by
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_schedule
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from course_schedule
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="kreadcn.homework.model.CourseSchedule">
+        insert into course_schedule (id, course_name, section,
+        week_range, week_day, student_count,
+        status, season_id, description,
+        reason, room_count, created_at,
+        updated_at, created_by, updated_by
+        )
+        values (#{id,jdbcType=INTEGER}, #{courseName,jdbcType=VARCHAR}, #{section,jdbcType=INTEGER},
+        #{weekRange,jdbcType=INTEGER}, #{weekDay,jdbcType=INTEGER}, #{studentCount,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER}, #{seasonId,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR},
+        #{reason,jdbcType=VARCHAR}, #{roomCount,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP},
+        #{updatedAt,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=INTEGER}, #{updatedBy,jdbcType=INTEGER}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="kreadcn.homework.model.CourseSchedule">
+        insert into course_schedule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="courseName != null">
+                course_name,
+            </if>
+            <if test="section != null">
+                section,
+            </if>
+            <if test="weekRange != null">
+                week_range,
+            </if>
+            <if test="weekDay != null">
+                week_day,
+            </if>
+            <if test="studentCount != null">
+                student_count,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="seasonId != null">
+                season_id,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="roomCount != null">
+                room_count,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="courseName != null">
+                #{courseName,jdbcType=VARCHAR},
+            </if>
+            <if test="section != null">
+                #{section,jdbcType=INTEGER},
+            </if>
+            <if test="weekRange != null">
+                #{weekRange,jdbcType=INTEGER},
+            </if>
+            <if test="weekDay != null">
+                #{weekDay,jdbcType=INTEGER},
+            </if>
+            <if test="studentCount != null">
+                #{studentCount,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="seasonId != null">
+                #{seasonId,jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="roomCount != null">
+                #{roomCount,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="kreadcn.homework.model.CourseSchedule">
+        update course_schedule
+        <set>
+            <if test="courseName != null">
+                course_name = #{courseName,jdbcType=VARCHAR},
+            </if>
+            <if test="section != null">
+                section = #{section,jdbcType=INTEGER},
+            </if>
+            <if test="weekRange != null">
+                week_range = #{weekRange,jdbcType=INTEGER},
+            </if>
+            <if test="weekDay != null">
+                week_day = #{weekDay,jdbcType=INTEGER},
+            </if>
+            <if test="studentCount != null">
+                student_count = #{studentCount,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="seasonId != null">
+                season_id = #{seasonId,jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="roomCount != null">
+                room_count = #{roomCount,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=INTEGER},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="kreadcn.homework.model.CourseSchedule">
+        update course_schedule
+        set course_name = #{courseName,jdbcType=VARCHAR},
+        section = #{section,jdbcType=INTEGER},
+        week_range = #{weekRange,jdbcType=INTEGER},
+        week_day = #{weekDay,jdbcType=INTEGER},
+        student_count = #{studentCount,jdbcType=INTEGER},
+        status = #{status,jdbcType=INTEGER},
+        season_id = #{seasonId,jdbcType=INTEGER},
+        description = #{description,jdbcType=VARCHAR},
+        reason = #{reason,jdbcType=VARCHAR},
+        room_count = #{roomCount,jdbcType=INTEGER},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        created_by = #{createdBy,jdbcType=INTEGER},
+        updated_by = #{updatedBy,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <!--    新增内容    -->
+    <!-- 批量删除 -->
+    <update id="deleteByIds">
+        delete from course_schedule
+        where id in
+        <foreach close=")" collection="courseScheduleIds" index="index" item="item" open="(" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <!-- 获取名字个数(分页) -->
+    <select id="count" resultType="integer">
+        select count(*)
+        from course_schedule
+        <where>
+            <if test="courseName != null">
+                course_name like #{courseName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 获取实验室(分页) 模糊查询(根据实验室名称、实验室地址查询) -->
+    <select id="list" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from course_schedule
+        <where>
+            <if test="queryDTO.courseName != null">course_name like #{queryDTO.courseName}</if>
+        </where>
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="getSchedules" resultType="kreadcn.homework.dto.AllocatedScheduleDTO">
+        select t1.id, t1.week_range AS weekRange, t1.week_day AS weekDay, t1.section, t1.created_by AS createdBy,
+        t1.course_name AS courseName,
+        t2.lab_id AS labId
+        from course_schedule t1
+        join schedule_lab t2 on t1.id = t2.schedule_id
+        <where>
+            <if test="status != null">
+                t1.status = #{status}
+            </if>
+            <if test="seasonId != null">
+                and t1.season_id = #{seasonId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

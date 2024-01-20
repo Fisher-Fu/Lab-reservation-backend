@@ -1,0 +1,53 @@
+{
+  "fetch": [
+    {
+      "core": "xpath",
+      "url": "https://book.duxiu.com/searchVideo?",
+      "method": "GET",
+      "request": [
+        {
+          "saveTo": "GET",
+          "fixed": true,
+          "encode": false,
+          "script": "const fieldMap = {\n  any: 'all',\n  title: '1',\n  author: \"2\",\n  keyword: \"3\",\n}\n\nretVal = '';\nconst keywords = [];\nfor (let i = 0; i < stepContext.getQueryItems().size(); i++) {\n  const queryItem = stepContext.getQueryItems().get(i);\n  if (i != 0 && \"and\" !== queryItem.getOperator()) {\n    continue;\n  }\n\n  if (!fieldMap[queryItem.getField()]) {\n    queryItem.setField(\"any\");\n  }\n\n  keywords.push(queryItem);\n}\n\nretVal += \"sw=\";\nretVal += Utils.encodeURL(keywords[keywords.length - 1].getValue(), \"utf-8\");\nretVal += \"&Field=\";\nretVal += fieldMap[keywords[keywords.length - 1].getField()];\nretVal += \"&channel=searchVideo&view=0&searchtype=&ecode=utf-8&isort=&bCon=y&allsw=\";\nconst sep = Utils.encodeURL(\"#,\", \"utf-8\");\nfor (let i = 0; i < keywords.length; i++) {\n  const queryItem = keywords[i];\n  retVal += sep;\n  retVal += fieldMap[queryItem.getField()];\n  retVal += Utils.encodeURL(queryItem.getValue(), \"utf-8\");\n}\n\nretVal += \"&Pages=\";\nretVal += (stepContext.getCurPage() + 1);\n"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "//div[@class='find_top']/span",
+        "prefix": "找到相关的音视频",
+        "script": "var index=retVal.indexOf(' '); retVal=retVal.substring(0,index);"
+      },
+      "records": {
+        "expr": "//div[@class='books sound_list']/ul/li"
+      },
+      "fields": [
+        {
+          "expr": "//dl/dt/a",
+          "key": "title",
+          "prefix": "《",
+          "suffix": "》"
+        },
+        {
+          "expr": "//dd[1]",
+          "key": "author",
+          "script": "var index1, index2; index1=retVal.indexOf('主讲人：'); index2=retVal.indexOf(' ',index1); if(index1>=0 && index2>=0)retVal=retVal.substring(index1+4, index2);else retVal=''"
+        },
+        {
+          "expr": "//dd[1]",
+          "key": "abstract",
+          "script": "var index1, index2; index1=retVal.indexOf('作品简介：'); index2=retVal.indexOf(' ',index1); if(index1>=0 && index2>=0)retVal=retVal.substring(index1+5, index2);else retVal=''"
+        },
+        {
+          "expr": "//dd[1]//strong[text()='关键词：']/following-sibling::a",
+          "key": "keyword"
+        },
+        {
+          "expr": "//dl/dt/a[1]/@href",
+          "key": "_detail",
+          "script": "retVal='https://book.duxiu.com/'+retVal;"
+        }
+      ]
+    }
+  ]
+}

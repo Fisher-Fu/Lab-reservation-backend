@@ -1,0 +1,72 @@
+{
+  "fetch": [
+    {
+      "core": "xpath",
+      "url": "https://qw.duxiu.com/getPage?",
+      "method": "GET",
+      "request": [
+        {
+          "saveTo": "GET",
+          "fixed": true,
+          "encode": false,
+          "script": "const keywords = [];\nretVal = '';\nfor (let i = 0; i < stepContext.getQueryItems().size(); i++) {\n  const queryItem = stepContext.getQueryItems().get(i);\n  if (i != 0 && \"and\" !== queryItem.getOperator()) {\n    continue;\n  }\n\n  keywords.push(queryItem.getValue());\n}\n\nretVal += \"sw=\";\nretVal += Utils.encodeURL(keywords[keywords.length - 1], \"utf-8\");\nretVal += \"&searchtype=0&ecode=utf-8&channel=goqw.jsp&iType=&allsw=\";\nconst sep = Utils.encodeURL(\"#,all\", \"utf-8\");\nfor (let i = 0; i < keywords.length; i++) {\n  const keyword = keywords[i];\n  retVal += sep;\n  retVal += Utils.encodeURL(keyword, \"utf-8\");\n}\n\nretVal += \"&bCon=y&sectyear=&field=&Page=\";\nretVal += (stepContext.getCurPage() + 1);"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "//div[@class='find_top']/span",
+        "prefix": "找到相关的条目",
+        "script": "var index=retVal.indexOf(' '); retVal=retVal.substring(0,index);"
+      },
+      "records": {
+        "expr": "//div[@class='journal']/ul/li"
+      },
+      "fields": [
+        {
+          "expr": "//dl/dt/a",
+          "key": "title"
+        },
+        {
+          "expr": "//dl/dd[1]/p/span[1]/span[1]",
+          "key": "abstract"
+        },
+        {
+          "expr": "//dl//a[@class='aread']/@href",
+          "key": "_readUrl",
+          "script": "retVal='https://qw.duxiu.com'+retVal;"
+        },
+        {
+          "expr": "//dl//a[@class='downspan']/@href",
+          "key": "_downloadUrl",
+          "script": "retVal='https://qw.duxiu.com'+retVal;"
+        },
+        {
+          "expr": "//span[@class='lzspan']",
+          "key": "source",
+          "suffix": "[M]",
+          "script": "var ar = retVal.split('\\.'); if(ar.length>1)retVal=ar[ar.length-2]; else retVal='';"
+        },
+        {
+          "expr": "//span[@class='lzspan']",
+          "key": "author",
+          "prefix": "来自",
+          "script": "var ar = retVal.split('\\.'); if(ar.length>0)retVal=ar[0]; else retVal='';"
+        },
+        {
+          "expr": "//span[@class='lzspan']",
+          "key": "pubDate",
+          "script": "var ar = retVal.split('\\.'); if(ar.length>2)retVal=ar[ar.length-1]; else retVal='';"
+        },
+        {
+          "expr": "//p[@class='keywords']/a",
+          "key": "keyword"
+        },
+        {
+          "expr": "//dl/dt/a/@href",
+          "key": "_detail",
+          "script": "retVal='https://qw.duxiu.com'+retVal;"
+        }
+      ]
+    }
+  ]
+}

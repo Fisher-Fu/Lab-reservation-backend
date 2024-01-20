@@ -1,0 +1,59 @@
+{
+  "fetch": [
+    {
+      "core": "json",
+      "url": "https://www.sslibrary.com/book/search/do?",
+      "method": "GET",
+      "request": [
+        {
+          "saveTo": "GET",
+          "fixed": true,
+          "encode": false,
+          "script": "const fieldMap = {\n  any: 'all',\n  title: '1',\n  author: \"2\",\n}\n\nretVal = '';\nconst keywords = [];\nfor (let i = 0; i < stepContext.getQueryItems().size(); i++) {\n  const queryItem = stepContext.getQueryItems().get(i);\n  if (i != 0 && \"and\" !== queryItem.getOperator()) {\n    continue;\n  }\n\n  if (!fieldMap[queryItem.getField()]) {\n    queryItem.setField(\"any\");\n  }\n\n  keywords.push(queryItem);\n}\n\nretVal += \"sw=\";\nretVal += Utils.encodeURL(keywords[keywords.length - 1].getValue(), \"utf-8\");\nretVal += \"&field=\";\nretVal += fieldMap[keywords[keywords.length - 1].getField()];\nretVal += \"&searchtype=&classifyId=&isort=&jsonp=&showcata=&expertsw=&bCon=y&pagesize=20&sign=&enc=&searchNewLib=0&allsw=\";\nconst sep = Utils.encodeURL(\"#,\", \"utf-8\");\nfor (let i = 0; i < keywords.length; i++) {\n  const queryItem = keywords[i];\n  retVal += sep;\n  retVal += fieldMap[queryItem.getField()];\n  retVal += Utils.encodeURL(queryItem.getValue(), \"utf-8\");\n}\n\nretVal += \"&page=\";\nretVal += (stepContext.getCurPage() + 1);\n"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "$.data.total"
+      },
+      "records": {
+        "expr": "$.data.result"
+      },
+      "fields": [
+        {
+          "expr": "$.bookName",
+          "key": "title"
+        },
+        {
+          "expr": "$.introduce",
+          "key": "abstract"
+        },
+        {
+          "expr": "$.author",
+          "key": "author"
+        },
+        {
+          "expr": "$.publisher",
+          "key": "publisher"
+        },
+        {
+          "expr": "$.date",
+          "key": "pubDate"
+        },
+        {
+          "expr": "$.keyword",
+          "key": "keyword"
+        },
+        {
+          "expr": "$.cnFenlei",
+          "key": "callNumber"
+        },
+        {
+          "expr": "$.cnFenlei",
+          "key": "_detail",
+          "script": "retVal='https://www.sslibrary.com/book/card?ssid=' + record.getString('ssid') + '&d=' + record.getString('bookCardD');"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kreadcn.homework.dao.ScheduleLabMapper">
+    <resultMap id="BaseResultMap" type="kreadcn.homework.model.ScheduleLab">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="schedule_id" jdbcType="INTEGER" property="scheduleId"/>
+        <result column="lab_id" jdbcType="INTEGER" property="labId"/>
+        <result column="created_by" jdbcType="INTEGER" property="createdBy"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, schedule_id, lab_id, created_by
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from schedule_lab
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from schedule_lab
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="kreadcn.homework.model.ScheduleLab">
+        insert into schedule_lab (id, schedule_id, lab_id,
+        created_by)
+        values (#{id,jdbcType=INTEGER}, #{scheduleId,jdbcType=INTEGER}, #{labId,jdbcType=INTEGER},
+        #{createdBy,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="kreadcn.homework.model.ScheduleLab">
+        insert into schedule_lab
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="scheduleId != null">
+                schedule_id,
+            </if>
+            <if test="labId != null">
+                lab_id,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="scheduleId != null">
+                #{scheduleId,jdbcType=INTEGER},
+            </if>
+            <if test="labId != null">
+                #{labId,jdbcType=INTEGER},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="kreadcn.homework.model.ScheduleLab">
+        update schedule_lab
+        <set>
+            <if test="scheduleId != null">
+                schedule_id = #{scheduleId,jdbcType=INTEGER},
+            </if>
+            <if test="labId != null">
+                lab_id = #{labId,jdbcType=INTEGER},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="kreadcn.homework.model.ScheduleLab">
+        update schedule_lab
+        set schedule_id = #{scheduleId,jdbcType=INTEGER},
+        lab_id = #{labId,jdbcType=INTEGER},
+        created_by = #{createdBy,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <delete id="deleteByScheduleIds">
+        delete
+        from schedule_lab
+        where schedule_id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,23 @@
+{
+  "fetch": [
+    {
+      "core": "kreadcn.prosearch.xsearch.stepparser.WanfangStepParser",
+      "coreClass": "redlib.search.xsearch.query.impl.WanfangUserStepParser",
+      "url": "https://s.wanfangdata.com.cn/SearchService.SearchService/search",
+      "method": "POST",
+      "reqContentType": "grpc",
+      "request": [
+        {
+          "saveTo": "HEADER",
+          "value": "Content-Type=application/grpc-web+proto",
+          "encode": false
+        },
+        {
+          "saveTo": "HEADER",
+          "value": "X-Grpc-Web=1",
+          "encode": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "fetch": [
+    {
+      "core": "json",
+      "url": "http://es.bookan.com.cn/api/searchByType?",
+      "method": "GET",
+      "request": [
+        {
+          "saveTo": "GET",
+          "fixed": true,
+          "encode": false,
+          "script": "const title = Utils.findQueryItem(stepContext.getQueryItems(), \"title\");\nconst journal = Utils.findQueryItem(stepContext.getQueryItems(), \"journal\");\nconst author = Utils.findQueryItem(stepContext.getQueryItems(), \"author\");\nconst any = Utils.findQueryItem(stepContext.getQueryItems(), \"any\");\n\nif (title == null && journal == null && any == null && author == null) {\n  any = stepContext.getQueryItems().get(0);\n}\n\nlet retVal = 'limit=20&resourceType=1&instanceId=23519&keyword=';\nif (any != null) {\n  retVal += Utils.encodeURL(any.getValue(), \"utf-8\");\n  retVal += \"&searchType=3\";\n} else if (journal != null) {\n  retVal += Utils.encodeURL(journal.getValue(), \"utf-8\");\n  retVal += \"&searchType=1\";\n} else if (title != null) {\n  retVal += Utils.encodeURL(title.getValue(), \"utf-8\");\n  retVal += \"&searchType=2\";\n} else if (author != null) {\n  retVal += Utils.encodeURL(author.getValue(), \"utf-8\");\n  retVal += \"&searchType=4\";\n}\n\nretVal += '&pageNum=';\nretVal += (stepContext.getCurPage() + 1);"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "$.totalNum",
+        "prefix": "共",
+        "suffix": "種"
+      },
+      "records": {
+        "expr": "$.data"
+      },
+      "fields": [
+        {
+          "expr": "$.resourceName",
+          "key": "title"
+        },
+        {
+          "expr": "$.author",
+          "key": "author"
+        },
+        {
+          "expr": "$.issueInfo.press",
+          "key": "publisher"
+        },
+        {
+          "expr": "$.issueInfo.text",
+          "key": "abstract"
+        },
+        {
+          "expr": "$.issueInfo.publish",
+          "key": "pubDate"
+        },
+        {
+          "expr": "$.issueId",
+          "key": "_detail",
+          "script": "retVal='http://zq5.bookan.com.cn/?id=23519#/detail/3/' + record.getString('issueId') +  '/' + record.getString('resourceId');"
+        }
+      ]
+    }
+  ]
+}

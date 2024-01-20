@@ -1,0 +1,110 @@
+[
+  {
+    "name": "com.github.benmanes.caffeine.cache.PSW",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.PSWMS",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.SSLA",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.SSLMSW",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.SSMSW",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.SSLMSA",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.PSAMS",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.SSSMSA",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.oauth2.server.authorization.jackson2.UnmodifiableMapDeserializer",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.jackson2.UnmodifiableMapDeserializer",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.jackson2.UnmodifiableListDeserializer",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.jackson2.UnmodifiableSetDeserializer",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.jackson2.UsernamePasswordAuthenticationTokenDeserializer",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "kreadcn.authserver.jackson.TokenDeserializer",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.jackson2.CoreJackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.cas.jackson2.CasJackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.web.jackson2.WebJackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.web.server.jackson2.WebServerJackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.web.jackson2.WebServletJackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.oauth2.client.jackson2.OAuth2ClientJackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.fasterxml.jackson.datatype.jsr310.JavaTimeModule",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.ldap.jackson2.LdapJackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.saml2.jackson2.Saml2Jackson2Module",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "java.util.Collections$UnmodifiableRandomAccessList",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.web.jackson2.WebAuthenticationDetailsMixin",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationRequestDeserializer",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "java.util.Collections$SingletonList",
+    "allDeclaredConstructors": true
+  }
+]

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kreadcn.homework.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="kreadcn.homework.model.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_code" property="userCode" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="CHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="TINYINT"/>
+        <result column="identity_number" property="identityNumber" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="expired_at" property="expiredAt" jdbcType="DATE"/>
+        <result column="enabled" property="enabled" jdbcType="BIT"/>
+        <result column="local" property="local" jdbcType="BIT"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="first_login_at" property="firstLoginAt" jdbcType="TIMESTAMP"/>
+        <result column="last_login_at" property="lastLoginAt" jdbcType="TIMESTAMP"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="created_by" property="createdBy" jdbcType="INTEGER"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_by" property="updatedBy" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , user_code, password, name, sex, identity_number, email,
+    phone, expired_at, enabled, local, description, first_login_at, last_login_at,
+    created_at, created_by, updated_at, updated_by
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id}
+    </select>
+
+    <select id="getByCode" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where user_code = #{userCode,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getByUserName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where user_code = #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insert" parameterType="kreadcn.homework.model.User" keyProperty="user.id" useGeneratedKeys="true">
+        insert into user (user_code, password,
+                          name, sex,
+                          identity_number, email,
+                          phone, expired_at, enabled, local,
+                          description, created_by, updated_by, created_at, updated_at)
+        values (#{user.userCode,jdbcType=VARCHAR}, #{user.password,jdbcType=CHAR},
+                #{user.name,jdbcType=VARCHAR}, #{user.sex,jdbcType=TINYINT},
+                #{user.identityNumber,jdbcType=VARCHAR},
+                #{user.email,jdbcType=VARCHAR},
+                #{user.phone,jdbcType=VARCHAR}, #{user.expiredAt,jdbcType=DATE}, #{user.enabled,jdbcType=BIT},
+                #{user.local,jdbcType=BIT},
+                #{user.description,jdbcType=VARCHAR}, #{user.createdBy,jdbcType=INTEGER},
+                #{user.updatedBy,jdbcType=INTEGER}, #{user.updatedAt,jdbcType=TIMESTAMP},
+                #{user.updatedAt,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKey">
+        update user set
+        <if test="user.password != null">
+            password = #{user.password,jdbcType=CHAR},
+        </if>
+        name = #{user.name,jdbcType=VARCHAR},
+        sex = #{user.sex,jdbcType=TINYINT},
+        identity_number = #{user.identityNumber,jdbcType=VARCHAR},
+        email = #{user.email,jdbcType=VARCHAR},
+        phone = #{user.phone,jdbcType=VARCHAR},
+        expired_at = #{user.expiredAt,jdbcType=DATE},
+        enabled = #{user.enabled,jdbcType=BIT},
+        local = #{user.local,jdbcType=BIT},
+        description = #{user.description,jdbcType=VARCHAR},
+        updated_at = #{user.updatedAt,jdbcType=INTEGER},
+        updated_by = #{user.updatedBy,jdbcType=INTEGER},
+        first_login_at = #{user.firstLoginAt},
+        last_login_at = #{user.lastLoginAt}
+        where id = #{user.id,jdbcType=INTEGER}
+    </update>
+
+    <!--查询（分页）-->
+    <select id="list" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        <where>
+            <if test="queryDTO.keyword != null">
+                and ( name like #{queryDTO.keyword} or user_code like #{queryDTO.keyword} or identity_number like
+                #{queryDTO.keyword} or phone like #{queryDTO.keyword}
+                or email like #{queryDTO.keyword}
+                )
+            </if>
+            <if test="queryDTO.expired == 2">
+                and expired_at &lt;now()
+            </if>
+            <if test="queryDTO.expired == 1">
+                and expired_at &gt;now()
+            </if>
+            <if test="queryDTO.enabled == 1">
+                and enabled= 1
+            </if>
+            <if test="queryDTO.enabled == 2">
+                and enabled= 0
+            </if>
+            <if test="queryDTO.logined == 1">
+                and first_login_at is null
+            </if>
+            <if test="queryDTO.logined == 2">
+                and first_login_at is not null
+            </if>
+        </where>
+        <if test="queryDTO.orderBy != null">
+            order by ${queryDTO.orderBy}
+        </if>
+        <if test="queryDTO.orderBy == null">
+            order by id desc
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--查询订单列表（分页）命中个数-->
+    <select id="count" resultType="integer">
+        select count(*) from user
+        <where>
+            <if test="queryDTO.keyword != null">
+                and ( name like #{queryDTO.keyword} or user_code like #{queryDTO.keyword} or identity_number like
+                #{queryDTO.keyword} or phone like #{queryDTO.keyword}
+                or email like #{queryDTO.keyword}
+                )
+            </if>
+
+            <if test="queryDTO.expired == 2">
+                and expired_at &lt;now()
+            </if>
+            <if test="queryDTO.expired == 1">
+                and expired_at &gt;now()
+            </if>
+            <if test="queryDTO.enabled == 1">
+                and enabled= 1
+            </if>
+            <if test="queryDTO.enabled == 2">
+                and enabled= 0
+            </if>
+            <if test="queryDTO.logined == 1">
+                and first_login_at is null
+            </if>
+            <if test="queryDTO.logined == 2">
+                and first_login_at is not null
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据code列表删除 -->
+    <delete id="delete">
+        delete
+        from user
+        where id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <select id="login" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where user_code = #{userCode} and password=#{password}
+    </select>
+
+
+    <select id="listByIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id in
+        <foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>

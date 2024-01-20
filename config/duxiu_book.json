@@ -1,0 +1,77 @@
+{
+  "fetch": [
+    {
+      "core": "xpath",
+      "url": "https://book.duxiu.com/advsearch?",
+      "method": "GET",
+      "request": [
+        {
+          "saveTo": "GET",
+          "fixed": true,
+          "encode": false,
+          "script": "const fieldMap = {\n  any: 'Book',\n  title: 'Book',\n  author: 'Author',\n  publisher: 'publish',\n  keyword: 'Word',\n  isbn: 'ISBN',\n}\n\nconst oprMap = {\n  and: 1,\n  or: 2,\n  not: 3\n}\n\nretVal = '';\nfor (let i = 0; i < stepContext.getQueryItems().size(); i++) {\n  const queryItem = stepContext.getQueryItems().get(i);\n  if (!queryItem.getValue() || !fieldMap[queryItem.getField()]) {\n    continue;\n  }\n\n  if (i != 0) {\n    retVal += '&';\n  }\n\n  retVal += fieldMap[queryItem.getField()];\n  retVal += \"=\";\n  retVal += Utils.encodeURL(queryItem.getValue(), \"utf-8\");\n}\n\nretVal += \"&bstype=1&rn=20&ecode=utf-8&Sort=&channel=search&Pages=\";\nretVal += (stepContext.getCurPage() + 1);"
+        }
+      ],
+      "respCharset": "utf-8",
+      "hit": {
+        "expr": "//div[@class='find_top']/span",
+        "prefix": "找到相关的中文图书"
+      },
+      "records": {
+        "expr": "//div[@class='books']/ul/li"
+      },
+      "fields": [
+        {
+          "expr": "//dl/dt/a",
+          "key": "title",
+          "prefix": "《",
+          "suffix": "》"
+        },
+        {
+          "expr": "//dl/dd[1]/p/span[1]/span[1]",
+          "key": "abstract"
+        },
+        {
+          "expr": "//dl//a[@class='aread']/@href",
+          "key": "_readUrl",
+          "script": "retVal='https://qw.duxiu.com'+retVal;"
+        },
+        {
+          "expr": "//dl//a[@class='downspan']/@href",
+          "key": "_downloadUrl",
+          "script": "retVal='https://qw.duxiu.com'+retVal;"
+        },
+        {
+          "expr": "//dd[contains(text(),'作者:')]",
+          "key": "author",
+          "prefix": "作者:"
+        },
+        {
+          "expr": "//dd[contains(text(),'出版社:')]",
+          "key": "publisher",
+          "prefix": "出版社:"
+        },
+        {
+          "expr": "//dd[contains(text(),'出版日期:')]",
+          "key": "pubDate",
+          "prefix": "出版日期:"
+        },
+        {
+          "expr": "//dd[contains(text(),'简介:')]",
+          "key": "abstract",
+          "prefix": "简介:"
+        },
+        {
+          "expr": "//dd[contains(text(),'主题词:')]",
+          "key": "keyword",
+          "prefix": "主题词:"
+        },
+        {
+          "expr": "//dl/dt/a/@href",
+          "key": "_detail",
+          "script": "retVal='https://book.duxiu.com/'+retVal;"
+        }
+      ]
+    }
+  ]
+}

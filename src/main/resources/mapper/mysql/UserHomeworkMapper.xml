@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kreadcn.homework.dao.UserHomeworkMapper">
+    <resultMap id="BaseResultMap" type="kreadcn.homework.model.UserHomework">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="homework_id" jdbcType="INTEGER" property="homeworkId"/>
+        <result column="sha1" jdbcType="VARCHAR" property="sha1"/>
+        <result column="file_size" jdbcType="INTEGER" property="fileSize"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
+        <result column="ip_address" jdbcType="VARCHAR" property="ipAddress"/>
+        <result column="created_by" jdbcType="INTEGER" property="createdBy"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        ,  homework_id, sha1, file_size, file_name,ip_address, created_by, created_at
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_homework
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from user_homework
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="kreadcn.homework.model.UserHomework" keyProperty="id" useGeneratedKeys="true">
+        insert into user_homework (id, homework_id,
+                                   sha1, file_size, file_name, ip_address,
+                                   created_by, created_at)
+        values (#{id,jdbcType=INTEGER}, #{homeworkId,jdbcType=INTEGER},
+                #{sha1,jdbcType=VARCHAR}, #{fileSize,jdbcType=INTEGER}, #{fileName,jdbcType=VARCHAR},
+                #{ipAddress,jdbcType=VARCHAR},
+                #{createdBy,jdbcType=INTEGER}, #{createdAt,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="kreadcn.homework.model.UserHomework">
+        update user_homework
+        set homework_id = #{homeworkId,jdbcType=INTEGER},
+            sha1        = #{sha1,jdbcType=VARCHAR},
+            file_size   = #{fileSize,jdbcType=INTEGER},
+            file_name   = #{fileName,jdbcType=VARCHAR},
+            ip_address  = #{ipAddress,jdbcType=VARCHAR},
+            created_by  = #{createdBy,jdbcType=INTEGER},
+            created_at  = #{createdAt,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="listByUserId" resultType="java.lang.Integer">
+        select homework_id
+        from user_homework
+        where created_by = #{id}
+        group by homework_id
+    </select>
+
+    <select id="listFiles" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_homework
+
+        where created_by = #{userId} and homework_id=#{homeworkId}
+    </select>
+
+    <select id="listByHomeworkId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_homework
+        where homework_id = #{id}
+        order by id;
+    </select>
+</mapper>
